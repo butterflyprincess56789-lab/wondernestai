@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WonderNest AI 🌸 Your AI Learning Partner</title>
+    <style>
+        /* =========================================
+           CSS VARIABLES & THEME (Pastel & Floral)
+           ========================================= */
+        :root {
+            --cream: #fdfbf7;
+            --pastel-pink: #ffe4e1;
+            --lavender: #e6e6fa;
+            --mint-green: #d4edd9;
+            --baby-blue: #d4e8f9;
+            --text-dark: #5a4a42;
+            --text-light: #8c7b73;
+            --white: #ffffff;
+            --shadow: 0 8px 24px rgba(90, 74, 66, 0.08);
+            --border-radius: 24px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Nunito', sans-serif; /* Kid-friendly fallback fonts */
+        }
+
+        body {
+            background-color: var(--cream);
+            color: var(--text-dark);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Floating Background Decorations */
+        .bg-decor {
+            position: absolute;
+            z-index: 0;
+            opacity: 0.4;
+            animation: float 6s ease-in-out infinite;
+            pointer-events: none;
+            font-size: 2rem;
+        }
+        .decor-1 { top: 10%; left: 5%; animation-delay: 0s; }
+        .decor-2 { top: 70%; left: 2%; animation-delay: 1s; font-size: 3rem; }
+        .decor-3 { top: 20%; right: 5%; animation-delay: 2s; font-size: 2.5rem; }
+        .decor-4 { bottom: 10%; right: 8%; animation-delay: 3s; }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* =========================================
+           NAVIGATION BAR
+           ========================================= */
+        header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            z-index: 10;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+        }
+
+        .logo-text h1 {
+            font-size: 1.5rem;
+            color: #ff8fab;
+            letter-spacing: 1px;
+        }
+
+        .logo-text p {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .api-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            background: var(--white);
+            padding: 8px 16px;
+            border-radius: 50px;
+            box-shadow: var(--shadow);
+            font-weight: bold;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #ff6b6b; /* Red by default */
+            transition: var(--transition);
+        }
+        .status-dot.connected {
+            background-color: #51cf66; /* Green */
+        }
+
+        button {
+            border: none;
+            cursor: pointer;
+            outline: none;
+            font-weight: bold;
+            transition: var(--transition);
+        }
+
+        .btn-settings {
+            background: var(--lavender);
+            color: var(--text-dark);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 1rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-settings:hover {
+            transform: translateY(-2px);
+            background: #d8d8f6;
+        }
+
+        /* =========================================
+           MAIN WORKSPACE
+           ========================================= */
+        .workspace {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 20px;
+            overflow: hidden;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* --- LEFT PANEL: Research Library --- */
+        .left-panel {
+            flex: 1;
+            background: var(--pastel-pink);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow);
+            border: 4px solid var(--white);
+        }
+
+        .panel-title {
+            font-size: 1.3rem;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .upload-area {
+            border: 2px dashed #ffb6c1;
+            background: rgba(255,255,255,0.5);
+            border-radius: 16px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 20px;
+        }
+        .upload-area:hover {
+            background: rgba(255,255,255,0.8);
+            transform: scale(1.02);
+        }
+        .upload-area input {
+            display: none;
+        }
+
+        .doc-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-right: 8px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.2); }
+
+        .doc-card {
+            background: var(--white);
+            padding: 16px;
+            border-radius: 16px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            animation: fadeIn 0.4s ease-out;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .doc-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .doc-icon {
+            font-size: 1.5rem;
+            background: var(--baby-blue);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+        }
+        .doc-name {
+            font-weight: bold;
+            font-size: 0.95rem;
+            word-break: break-all;
+        }
+        .doc-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .btn-doc {
+            flex: 1;
+            padding: 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            background: var(--mint-green);
+        }
+        .btn-doc:hover { background: #b8e6c1; }
+        .btn-doc.delete { background: #ffcccb; }
+        .btn-doc.delete:hover { background: #ffb3b1; }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-light);
+            margin-top: 40px;
+            font-size: 1.1rem;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        /* --- RIGHT PANEL: AI Chat --- */
+        .right-panel {
+            flex: 2;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            border: 4px solid var(--lavender);
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: var(--lavender);
+            padding: 16px 24px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 16px 20px;
+            border-radius: 20px;
+            line-height: 1.5;
+            animation: fadeIn 0.3s ease-out;
+            position: relative;
+        }
+        
+        .message.ai {
+            background: var(--mint-green);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        .message.user {
+            background: var(--baby-blue);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        .message strong { color: #3a2a22; }
+
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 0 24px 16px 24px;
+        }
+        .btn-suggest {
+            background: var(--cream);
+            border: 2px solid var(--baby-blue);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+        }
+        .btn-suggest:hover {
+            background: var(--baby-blue);
+            transform: translateY(-2px);
+        }
+
+        .chat-input-area {
+            padding: 20px 24px;
+            background: rgba(230, 230, 250, 0.3);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            border-top: 2px solid var(--cream);
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            padding: 16px 20px;
+            border-radius: 30px;
+            border: 2px solid var(--lavender);
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+        .chat-input-area input:focus {
+            border-color: #bfaaff;
+            box-shadow: 0 0 10px rgba(191, 170, 255, 0.3);
+        }
+
+        .btn-send {
+            background: #ff8fab;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+        .btn-send:hover {
+            background: #ff6b93;
+            transform: scale(1.1);
+        }
+        .btn-send:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* =========================================
+           SETTINGS MODAL
+           ========================================= */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition);
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background: var(--white);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            transform: translateY(20px);
+            transition: var(--transition);
+            border: 4px solid var(--mint-green);
+        }
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-content h2 { margin-bottom: 15px; color: var(--text-dark); }
+        .modal-content p { color: var(--text-light); margin-bottom: 20px; font-size: 0.95rem; }
+        
+        .modal-content input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: 2px solid var(--lavender);
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .btn-modal {
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-size: 1rem;
+        }
+        .btn-cancel { background: #f0f0f0; }
+        .btn-save { background: var(--mint-green); }
+
+        /* Loading Dots Animation */
+        .typing-indicator {
+            display: inline-flex;
+            gap: 4px;
+            padding: 10px 16px;
+            background: var(--mint-green);
+            border-radius: 20px;
+            align-self: flex-start;
+        }
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: var(--text-dark);
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .workspace { flex-direction: column; overflow-y: auto; }
+            .left-panel { flex: none; height: 350px; }
+            .right-panel { flex: none; height: 600px; }
+            header { flex-direction: column; gap: 15px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Floating Background Decor -->
+    <div class="bg-decor decor-1">🌸</div>
+    <div class="bg-decor decor-2">✨</div>
+    <div class="bg-decor decor-3">🦋</div>
+    <div class="bg-decor decor-4">🌼</div>
+
+    <!-- Header -->
+    <header>
+        <div class="logo-area">
+            <div class="logo-icon">🌱</div>
+            <div class="logo-text">
+                <h1>WonderNest AI</h1>
+                <p>Your AI learning partner for curious minds</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <div class="api-status">
+                <div class="status-dot" id="api-status-dot"></div>
+                <span id="api-status-text">Not Connected</span>
+            </div>
+            <button class="btn-settings" onclick="toggleSettings(true)">
+                ⚙️ Settings
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="workspace">
+        
+        <!-- Left Panel: Library -->
+        <aside class="left-panel">
+            <h2 class="panel-title">📚 My Research Library</h2>
+            
+            <label class="upload-area">
+                <div style="font-size: 2rem; margin-bottom: 10px;">📄</div>
+                <p><strong>Click here to upload files</strong></p>
+                <p style="font-size: 0.8rem; color: var(--text-light); margin-top: 5px;">Supports .pdf, .txt, .md, .csv</p>
+                <input type="file" id="file-upload" accept=".txt,.pdf,.md,.csv" multiple>
+            </label>
+
+            <div class="doc-list" id="doc-list">
+                <!-- Document Cards will be generated here -->
+                <div class="empty-state" id="doc-empty-state">
+                    🌸 <br><br>
+                    Upload your learning materials and start exploring!
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right Panel: AI Chat -->
+        <section class="right-panel">
+            <div class="chat-header">
+                🤖 Chat with SproutAI
+            </div>
+            
+            <div class="chat-messages" id="chat-messages">
+                <!-- Welcome Message -->
+                <div class="message ai">
+                    Hello! I'm your magical learning tutor. Upload some documents on the left, and ask me anything about them! ✨
+                </div>
+            </div>
+
+            <!-- Suggestions -->
+            <div class="suggestions" id="suggestions">
+                <button class="btn-suggest" onclick="useSuggestion('Explain this like I am 10 years old')">👦 Explain like I'm 10</button>
+                <button class="btn-suggest" onclick="useSuggestion('Summarize the important points')">📝 Summarize points</button>
+                <button class="btn-suggest" onclick="useSuggestion('Create 3 quiz questions about this')">❓ Create a quiz</button>
+                <button class="btn-suggest" onclick="useSuggestion('Teach me the main topic')">🎓 Teach me</button>
+            </div>
+
+            <!-- Input Area -->
+            <div class="chat-input-area">
+                <input type="text" id="chat-input" placeholder="Ask a question about your documents..." onkeypress="handleEnter(event)">
+                <button class="btn-send" id="btn-send" onclick="sendMessage()">🚀</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settings-modal">
+        <div class="modal-content">
+            <h2>✨ Connect Gemini AI</h2>
+            <p>Your API key is securely managed by the environment! You're all set and ready to start learning.</p>
+            <div class="modal-actions">
+                <button class="btn-modal btn-save" onclick="toggleSettings(false)">Awesome!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Logic (Vanilla JS) -->
+    <script>
+        // --- State Management ---
+        const apiKey = "";
+        let documents = []; // Array to store uploaded files data
+        let chatHistory = []; // Array to store conversation history
+
+        // --- DOM Elements ---
+        const modal = document.getElementById('settings-modal');
+        const keyInput = document.getElementById('api-key-input');
+        const statusDot = document.getElementById('api-status-dot');
+        const statusText = document.getElementById('api-status-text');
+        
+        const fileUpload = document.getElementById('file-upload');
+        const docList = document.getElementById('doc-list');
+        const docEmptyState = document.getElementById('doc-empty-state');
+        
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const btnSend = document.getElementById('btn-send');
+
+        // --- Initialization ---
+        function init() {
+            updateConnectionStatus();
+        }
+
+        // --- API Key Management ---
+        function toggleSettings(show) {
+            modal.classList.toggle('active', show);
+        }
+
+        function saveApiKey() {
+            toggleSettings(false);
+        }
+
+        function updateConnectionStatus() {
+            statusDot.classList.add('connected');
+            statusText.innerText = "Gemini Connected";
+            statusText.style.color = "#51cf66";
+        }
+
+        // --- Document Upload & Management ---
+        fileUpload.addEventListener('change', async (event) => {
+            const files = event.target.files;
+            if (files.length === 0) return;
+
+            for (const file of files) {
+                if (file.size > 15 * 1024 * 1024) { // 15MB limit to prevent browser slowdowns
+                    alert(`File ${file.name} is too large. Please upload files smaller than 15MB.`);
+                    continue;
+                }
+                await processFile(file);
+            }
+            
+            renderDocuments();
+            fileUpload.value = ''; // Reset input
+        });
+
+        async function processFile(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                
+                if (file.type === 'application/pdf') {
+                    reader.onload = (e) => {
+                        const base64Data = e.target.result.split(',')[1];
+                        if (!documents.some(d => d.name === file.name)) {
+                            documents.push({
+                                id: Date.now() + Math.random().toString(36).substr(2, 9),
+                                name: file.name,
+                                type: file.type,
+                                content: base64Data, // Store base64 for PDF
+                                isPdf: true,
+                                uploadedAt: new Date()
+                            });
+                        }
+                        resolve();
+                    };
+                    reader.readAsDataURL(file); // Read as Base64 to send to Gemini
+                } else {
+                    reader.onload = (e) => {
+                        const content = e.target.result;
+                        // Simple check if it's already in the list to avoid duplicates
+                        if (!documents.some(d => d.name === file.name)) {
+                            documents.push({
+                                id: Date.now() + Math.random().toString(36).substr(2, 9),
+                                name: file.name,
+                                type: file.type,
+                                content: content,
+                                isPdf: false,
+                                uploadedAt: new Date()
+                            });
+                        }
+                        resolve();
+                    };
+                    reader.readAsText(file); // Read normally for text files
+                }
+            });
+        }
+
+        function renderDocuments() {
+            if (documents.length === 0) {
+                docList.innerHTML = '';
+                docList.appendChild(docEmptyState);
+                return;
+            }
+
+            docList.innerHTML = '';
+            documents.forEach(doc => {
+                const ext = doc.name.split('.').pop().toLowerCase();
+                const icon = ext === 'pdf' ? '📕' : '📄';
+
+                const card = document.createElement('div');
+                card.className = 'doc-card';
+                card.innerHTML = `
+                    <div class="doc-header">
+                        <div class="doc-icon">${icon}</div>
+                        <div class="doc-name">${doc.name}</div>
+                    </div>
+                    <div class="doc-actions">
+                        <button class="btn-doc" onclick="quickAction('Summarize this document: ${doc.name}')">✨ Summarize</button>
+                        <button class="btn-doc delete" onclick="removeDocument('${doc.id}')">🗑️ Remove</button>
+                    </div>
+                `;
+                docList.appendChild(card);
+            });
+        }
+
+        function removeDocument(id) {
+            documents = documents.filter(doc => doc.id !== id);
+            renderDocuments();
+        }
+
+        function quickAction(prompt) {
+            chatInput.value = prompt;
+            sendMessage();
+        }
+
+        // --- Chat & AI Interaction ---
+        function useSuggestion(text) {
+            chatInput.value = text;
+            sendMessage();
+        }
+
+        function handleEnter(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function formatMarkdown(text) {
+            // Very basic vanilla JS markdown formatter (bold, italic, line breaks)
+            let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // Bold
+            formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>'); // Italic
+            formatted = formatted.replace(/\n/g, '<br>'); // Line breaks
+            return formatted;
+        }
+
+        function appendMessage(role, text) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${role}`;
+            msgDiv.innerHTML = role === 'ai' ? formatMarkdown(text) : text;
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll
+        }
+
+        function showTyping() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'typing-indicator';
+            typingDiv.id = 'typing-indicator';
+            typingDiv.innerHTML = '<span></span><span></span><span></span>';
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTyping() {
+            const typingDiv = document.getElementById('typing-indicator');
+            if (typingDiv) typingDiv.remove();
+        }
+
+        async function fetchWithRetry(url, options, maxRetries = 5) {
+            const delays = [1000, 2000, 4000, 8000, 16000];
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) {
+                        const errData = await response.json();
+                        throw new Error(errData.error?.message || 'API Error');
+                    }
+                    return response;
+                } catch (error) {
+                    if (i === maxRetries - 1) throw error;
+                    await new Promise(resolve => setTimeout(resolve, delays[i]));
+                }
+            }
+        }
+
+        async function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+
+            // UI Updates
+            appendMessage('user', text);
+            chatInput.value = '';
+            btnSend.disabled = true;
+            showTyping();
+
+            // Prepare System Instruction
+            const systemPrompt = `You are WonderNest AI, a highly friendly, magical, and encouraging AI learning tutor for kids. 
+You use simple language, kid-friendly analogies, and cute emojis (🌸, 🌟, 📚, 🚀, 💡).
+If the user asks questions about their documents, answer based ONLY on the provided document context. 
+If they ask a general question, answer as a helpful teacher. Always be safe, polite, and educational.`;
+
+            // Build request contents dynamically
+            const requestContents = [];
+
+            if (documents.length > 0) {
+                const docParts = [];
+                let textContext = "Here are the documents the user has uploaded for reference:\n\n";
+                
+                documents.forEach(doc => {
+                    if (doc.isPdf) {
+                        docParts.push({
+                            inlineData: {
+                                mimeType: "application/pdf",
+                                data: doc.content
+                            }
+                        });
+                        textContext += `[Included PDF Document: ${doc.name}]\n`;
+                    } else {
+                        textContext += `--- START OF DOCUMENT: ${doc.name} ---\n`;
+                        textContext += doc.content.substring(0, 15000) + (doc.content.length > 15000 ? "\n[Content Truncated...]" : "");
+                        textContext += `\n--- END OF DOCUMENT ---\n\n`;
+                    }
+                });
+
+                // Prepend text instructions to the parts array
+                docParts.unshift({ text: textContext });
+                
+                // Add documents as the first conversational turn to provide context
+                requestContents.push({ role: "user", parts: docParts });
+                requestContents.push({ role: "model", parts: [{ text: "I have received the documents and am ready to answer questions about them!" }] });
+            }
+
+            // Append chat history
+            requestContents.push(...chatHistory);
+            
+            // Append current user message
+            requestContents.push({ role: "user", parts: [{ text: text }] });
+
+            // Prepare API payload
+            const requestBody = {
+                system_instruction: { parts: [{ text: systemPrompt }] },
+                contents: requestContents,
+                generationConfig: {
+                    temperature: 0.7,
+                }
+            };
+
+            try {
+                const response = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody)
+                });
+
+                const data = await response.json();
+                const aiResponseText = data.candidates[0].content.parts[0].text;
+
+                hideTyping();
+                appendMessage('ai', aiResponseText);
+
+                // Update chat history
+                chatHistory.push({ role: "user", parts: [{ text: text }] });
+                chatHistory.push({ role: "model", parts: [{ text: aiResponseText }] });
+
+            } catch (error) {
+                hideTyping();
+                let errorMsg = "Oops! My magic wand broke. 🪄 I'm having trouble connecting to the AI.";
+                appendMessage('ai', `<em>${errorMsg}</em>`);
+            } finally {
+                btnSend.disabled = false;
+                chatInput.focus();
+            }
+        }
+
+        // Run setup on load
+        window.onload = init;
+
+    </script>
+</body>
+</html>
